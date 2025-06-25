@@ -2,8 +2,10 @@ import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Login from './pages/Login';
+import "./index.css"
 import Dashboard from './pages/Dashboard';
 import { UserProvider } from './context/UserContext';
+import Curso from './pages/Curso';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -12,6 +14,7 @@ root.render(
       <Routes>
         <Route path='/' element={<Login/>}/>
         <Route path='/dashboard' element={<Dashboard/>}/>
+        <Route path='/curso/:id' element={<Curso/>}/>
       </Routes>
     </BrowserRouter>
   </UserProvider>

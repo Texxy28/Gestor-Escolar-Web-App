@@ -30,7 +30,7 @@ export default function Dashboard() {
   return (
     <div>
         <h2>Bienvenido {user?.nombre || "Invitado"}</h2>
-        <section>
+        <section className="flex flex-auto justify-normal items-center">
             {cursos.map((curso) => (
                 <CursoDialog key={curso.curso_id} curso={curso}/>
             ))}

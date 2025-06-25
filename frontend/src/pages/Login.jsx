@@ -5,7 +5,7 @@ import { useUser } from '../context/UserContext';
 
 export default function Login() {
 
-  const { setUser } = useUser();
+  const { login } = useUser();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,8 +18,7 @@ export default function Login() {
       const res = await axios.post('http://localhost:5000/api/auth/login', {
         email, password
       });
-      localStorage.setItem('token', res.data.token);
-      setUser(res.data.user);
+      login(res.data.user, res.data.token);
       navigate("/dashboard");
     } catch (err) {
       alert('Login fallido');

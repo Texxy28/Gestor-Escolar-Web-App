@@ -1,8 +1,12 @@
+import { useUser } from "../context/UserContext"
+
 export default function Dashboard () {
+
+    const { user } = useUser();
 
     return (
 
-        <div>WA</div>
+        <div>Bienvenido {user?.nombre || "Invitado"}</div>
 
     )
 

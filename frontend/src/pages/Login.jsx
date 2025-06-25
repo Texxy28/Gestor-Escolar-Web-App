@@ -1,12 +1,16 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../context/UserContext';
 
 export default function Login() {
+
+  const { setUser } = useUser();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -15,6 +19,7 @@ export default function Login() {
         email, password
       });
       localStorage.setItem('token', res.data.token);
+      setUser(res.data.user);
       navigate("/dashboard");
     } catch (err) {
       alert('Login fallido');

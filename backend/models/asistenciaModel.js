@@ -1,7 +1,7 @@
 const { sql, config } = require("../database/db");
 
 const AsistenciaModel = {
-  async getAsistenciasPorCurso(curso_id, fecha) {
+  async getAsistenciasPorCursoYFecha(curso_id, fecha) {
     const pool = await sql.connect(config);
     const result = await pool
       .request()
@@ -14,6 +14,15 @@ const AsistenciaModel = {
         WHERE curso_id = @curso_id AND fecha = @fecha
       `
       );
+    return result.recordset;
+  },
+
+  async getAsistenciasPorCurso(curso_id) {
+    const pool = await sql.connect(config);
+    const result = await pool
+      .request()
+      .input("curso_id", sql.Int, curso_id)
+      .query(`select * from Asistencias where curso_id = @curso_id`);
     return result.recordset;
   },
 

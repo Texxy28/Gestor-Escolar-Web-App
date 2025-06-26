@@ -1,10 +1,9 @@
-// src/context/UserContext.jsx
 import { createContext, useState, useContext, useEffect } from "react";
 
 const UserContext = createContext();
 
 export function UserProvider({ children }) {
-  const [user, setUser] = useState(null); // Guardamos el usuario aquí
+  const [user, setUser] = useState(null); 
   const [token, setToken] = useState(null); 
 
   // Al iniciar la app, lee del localStorage

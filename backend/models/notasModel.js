@@ -19,7 +19,7 @@ const NotasModel = {
     const pool = await sql.connect(config);
     const result = await pool.request()
       .input('curso_id', sql.Int, curso_id)
-      .query(`SELECT * FROM Notas WHERE curso_id = @curso_id`);
+      .query(`SELECT alumno_id, trimestre, nota FROM Notas WHERE curso_id = @curso_id`);
     return result.recordset;
   },
 
@@ -36,6 +36,20 @@ const NotasModel = {
     await pool.request()
       .input('id', sql.Int, id)
       .query(`DELETE FROM Notas WHERE id = @id`);
+  },
+
+  async obtenerNotaPorAlumnoYCurso(alumno_id, curso_id) {
+    const pool = await sql.connect(config);
+    const result = await pool.request()
+      .input('alumno_id', sql.Int, alumno_id)
+      .input('curso_id', sql.Int, curso_id)
+      .query(
+        `SELECT trimestre, nota
+        FROM Notas
+        WHERE alumno_id = @alumno_id AND curso_id = @curso_id
+        ORDER BY trimestre`
+      )
+    return result.recordset;
   }
 };
 

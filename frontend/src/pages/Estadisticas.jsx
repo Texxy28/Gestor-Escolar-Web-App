@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import { useUser } from "../context/UserContext";
 import axios from "axios";
-import CursoDialog from "../components/CursoDialog";
-import { Link } from "react-router-dom";
 
-export default function Dashboard() {
+export default function Estadisticas() {
   const [cursos, setCursos] = useState([]);
 
   const { user, token } = useUser();
@@ -30,13 +28,12 @@ export default function Dashboard() {
 
   return (
     <div>
-        <h2>Bienvenido {user?.nombre || "Invitado"}</h2>
-        <section className="flex flex-auto justify-normal items-center">
-            {cursos.map((curso) => (
-                <CursoDialog key={curso.curso_id} curso={curso}/>
-            ))}
-        </section>
-        <Link to="/estadistica">Estadisticas</Link>
+      <select>
+        <option selected>--Seleccione un curso--</option>
+        {cursos.map((curso) => (
+            <option key={curso.curso_id}>{curso.nombre_curso}</option>
+        ))}
+      </select>
     </div>
-    );
+  );
 }

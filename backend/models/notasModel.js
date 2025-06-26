@@ -1,15 +1,14 @@
-// backend/models/notas.model.js
-const { sql, config } = require('../database/db');
+const { sql, config } = require("../database/db");
 
 const NotasModel = {
   async crearNota({ alumno_id, curso_id, trimestre, nota }) {
     const pool = await sql.connect(config);
-    await pool.request()
-      .input('alumno_id', sql.Int, alumno_id)
-      .input('curso_id', sql.Int, curso_id)
-      .input('trimestre', sql.Int, trimestre)
-      .input('nota', sql.Decimal(5, 2), nota)
-      .query(`
+    await pool
+      .request()
+      .input("alumno_id", sql.Int, alumno_id)
+      .input("curso_id", sql.Int, curso_id)
+      .input("trimestre", sql.Int, trimestre)
+      .input("nota", sql.Decimal(5, 2), nota).query(`
         INSERT INTO Notas (alumno_id, curso_id, trimestre, nota)
         VALUES (@alumno_id, @curso_id, @trimestre, @nota)
       `);
@@ -17,40 +16,56 @@ const NotasModel = {
 
   async obtenerNotasPorCurso(curso_id) {
     const pool = await sql.connect(config);
-    const result = await pool.request()
-      .input('curso_id', sql.Int, curso_id)
-      .query(`SELECT alumno_id, trimestre, nota FROM Notas WHERE curso_id = @curso_id`);
+    const result = await pool
+      .request()
+      .input("curso_id", sql.Int, curso_id)
+      .query(
+        `SELECT alumno_id, trimestre, nota FROM Notas WHERE curso_id = @curso_id`
+      );
     return result.recordset;
   },
 
-  async actualizarNota(id, nota) {
+  async actualizarNota({ alumno_id, curso_id, trimestre, nota }) {
     const pool = await sql.connect(config);
-    await pool.request()
-      .input('id', sql.Int, id)
-      .input('nota', sql.Decimal(5, 2), nota)
-      .query(`UPDATE Notas SET nota = @nota WHERE id = @id`);
+    await pool
+      .request()
+      .input("alumno_id", sql.Int, alumno_id)
+      .input("curso_id", sql.Int, curso_id)
+      .input("trimestre", sql.Int, trimestre)
+      .input("nota", sql.Decimal(5, 2), nota).query(`
+        MERGE INTO Notas AS target
+        USING (SELECT @alumno_id AS alumno_id, @curso_id AS curso_id, @trimestre AS trimestre) AS source
+        ON (target.alumno_id = source.alumno_id AND target.curso_id = source.curso_id AND target.trimestre = source.trimestre)
+        WHEN MATCHED THEN
+          UPDATE SET nota = @nota
+        WHEN NOT MATCHED THEN
+          INSERT (alumno_id, curso_id, trimestre, nota)
+          VALUES (@alumno_id, @curso_id, @trimestre, @nota);
+      `);
   },
 
   async eliminarNota(id) {
     const pool = await sql.connect(config);
-    await pool.request()
-      .input('id', sql.Int, id)
+    await pool
+      .request()
+      .input("id", sql.Int, id)
       .query(`DELETE FROM Notas WHERE id = @id`);
   },
 
   async obtenerNotaPorAlumnoYCurso(alumno_id, curso_id) {
     const pool = await sql.connect(config);
-    const result = await pool.request()
-      .input('alumno_id', sql.Int, alumno_id)
-      .input('curso_id', sql.Int, curso_id)
+    const result = await pool
+      .request()
+      .input("alumno_id", sql.Int, alumno_id)
+      .input("curso_id", sql.Int, curso_id)
       .query(
         `SELECT trimestre, nota
         FROM Notas
         WHERE alumno_id = @alumno_id AND curso_id = @curso_id
         ORDER BY trimestre`
-      )
+      );
     return result.recordset;
-  }
+  },
 };
 
 module.exports = NotasModel;

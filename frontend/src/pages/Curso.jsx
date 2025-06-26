@@ -9,13 +9,65 @@ export default function Curso() {
   const [curso, setCurso] = useState(null);
   const [notas, setNotas] = useState({}); // { alumnoId: { 1: 12, 2: 14, 3: 16 } }
   const [asistencia, setAsistencia] = useState({}); // { alumnoId: true/false }
-  const [fecha, setFecha] = useState(
-    () => new Date().toISOString().split("T")[0]
-  ); // yyyy-mm-dd
 
-  const guardarNotas = (alumnoid) => {};
+  const guardarAsistencias = async () => {
+    const fechaHoy = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
-  const handleChangeNota = (alumnoId, trimestre, nota) => {};
+    for (const alumno_id in asistencia) {
+      const presente = asistencia[alumno_id];
+
+      try {
+        await axios.post(
+          "http://localhost:5000/api/asistencias/",
+          {
+            alumno_id: parseInt(alumno_id),
+            curso_id: id,
+            fecha: fechaHoy,
+            presente,
+          },
+          {
+            headers: {
+              Authorization: `${token}`,
+            },
+          }
+        );
+      } catch (err) {
+        console.error(
+          `Error al guardar asistencia para alumno ${alumno_id}`,
+          err
+        );
+      }
+    }
+  };
+
+  const guardarNotas = async (alumnoId) => {
+    const notasAlumno = notas[alumnoId];
+    if (!notasAlumno) return;
+
+    for (const trimestre of [1, 2, 3]) {
+      const nota = notasAlumno[trimestre];
+      if (nota !== undefined && nota !== "") {
+        try {
+          await axios.post(
+            "http://localhost:5000/api/notas/edit",
+            {
+              alumno_id: alumnoId,
+              curso_id: curso.curso_id,
+              trimestre,
+              nota,
+            },
+            {
+              headers: {
+                Authorization: `${token}`,
+              },
+            }
+          );
+        } catch (err) {
+          console.error(`Error guardando nota del alumno ${alumnoId}:`, err);
+        }
+      }
+    }
+  };
 
   useEffect(() => {
     if (!token) return;
@@ -32,15 +84,12 @@ export default function Curso() {
       setCurso(res.data);
     };
 
-     const fetchNotas = async () => {
-      const res = await axios.get(
-        `http://localhost:5000/api/notas/${id}`,
-        {
-          headers: {
-            Authorization: `${token}`,
-          },
-        }
-      );
+    const fetchNotas = async () => {
+      const res = await axios.get(`http://localhost:5000/api/notas/${id}`, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
       const agrupadas = {};
       res.data.forEach(({ alumno_id, trimestre, nota }) => {
         if (!agrupadas[alumno_id]) agrupadas[alumno_id] = {};
@@ -50,8 +99,32 @@ export default function Curso() {
       setNotas(agrupadas);
     };
 
+    const fetchAsistencias = async () => {
+      try {
+        const fechaHoy = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+        const res = await axios.get(
+          `http://localhost:5000/api/asistencias/curso/${id}?fecha=${fechaHoy}`,
+          {
+            headers: {
+              Authorization: `${token}`,
+            },
+          }
+        );
+
+        const asistenciasMap = {};
+        res.data.forEach(({ alumno_id, presente }) => {
+          asistenciasMap[alumno_id] = presente;
+        });
+
+        setAsistencia(asistenciasMap);
+      } catch (err) {
+        console.error("Error al cargar asistencias:", err);
+      }
+    };
+
     fetchCurso();
     fetchNotas();
+    fetchAsistencias();
   }, [id, token]);
 
   if (!curso) return <div>Cargando detalles del curso...</div>;
@@ -72,7 +145,6 @@ export default function Curso() {
             {alumno.apellidos} {alumno.nombre}
           </p>
 
-          {/* Notas */}
           <div className="flex items-center space-x-2 mt-2">
             {[1, 2, 3].map((trimestre) => (
               <input
@@ -82,21 +154,66 @@ export default function Curso() {
                 max={20}
                 placeholder={`T${trimestre}`}
                 value={notas[alumno.id]?.[trimestre] || ""}
-                onChange={(e) =>
-                  handleChangeNota(alumno.id, trimestre, e.target.value)
-                }
+                onChange={(e) => {
+                  const nuevaNota = parseFloat(e.target.value) || "";
+                  setNotas((prev) => ({
+                    ...prev,
+                    [alumno.id]: {
+                      ...prev[alumno.id],
+                      [trimestre]: nuevaNota,
+                    },
+                  }));
+                }}
                 className="w-16 border px-2 py-1 rounded"
               />
             ))}
             <button
               onClick={() => guardarNotas(alumno.id)}
-              className="px-3 py-1 bg-blue-600 text-white rounded"
+              className="ml-4 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
             >
-              Guardar notas
+              Guardar
             </button>
           </div>
+
+          <span
+            className={`px-2 py-1 rounded text-sm ${
+              asistencia[alumno.id] === true
+                ? "bg-green-100 text-green-700"
+                : asistencia[alumno.id] === false
+                ? "bg-red-100 text-red-700"
+                : "bg-gray-200 text-gray-600"
+            }`}
+          >
+            {asistencia[alumno.id] === true
+              ? "Presente"
+              : asistencia[alumno.id] === false
+              ? "Ausente"
+              : "Sin registro"}
+          </span>
+
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={asistencia[alumno.id] || false}
+              onChange={(e) => {
+                const value = e.target.checked;
+                setAsistencia((prev) => ({
+                  ...prev,
+                  [alumno.id]: value,
+                }));
+              }}
+            />
+            Presente
+          </label>
         </div>
       ))}
+
+      <button
+        onClick={guardarAsistencias}
+        className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+      >
+        Guardar asistencias
+      </button>
     </div>
   );
 }

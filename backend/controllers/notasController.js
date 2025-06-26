@@ -1,4 +1,3 @@
-// backend/controllers/notas.controller.js
 const NotasModel = require("../models/notasModel");
 
 exports.crearNota = async (req, res) => {
@@ -22,8 +21,8 @@ exports.obtenerNotas = async (req, res) => {
 
 exports.actualizarNota = async (req, res) => {
   try {
-    const { nota } = req.body;
-    await NotasModel.actualizarNota(req.params.id, nota);
+    const { alumno_id, curso_id, trimestre, nota } = req.body;
+    await NotasModel.actualizarNota({ alumno_id, curso_id, trimestre, nota });
     res.json({ msg: "Nota actualizada correctamente" });
   } catch (err) {
     res.status(500).json({ msg: "Error al actualizar nota" });
@@ -42,7 +41,10 @@ exports.eliminarNota = async (req, res) => {
 exports.obtenerNotaPorAlumnoYCurso = async (req, res) => {
   const { alumno_id, curso_id } = req.params;
   try {
-    const notas = await NotasModel.obtenerNotaPorAlumnoYCurso(alumno_id, curso_id);
+    const notas = await NotasModel.obtenerNotaPorAlumnoYCurso(
+      alumno_id,
+      curso_id
+    );
     res.json(notas);
   } catch (err) {
     res.status(500).json({ msg: "Error al obtener notas" });

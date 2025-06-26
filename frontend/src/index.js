@@ -6,6 +6,7 @@ import "./index.css"
 import Dashboard from './pages/Dashboard';
 import { UserProvider } from './context/UserContext';
 import Curso from './pages/Curso';
+import Estadisticas from './pages/Estadisticas';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -15,6 +16,7 @@ root.render(
         <Route path='/' element={<Login/>}/>
         <Route path='/dashboard' element={<Dashboard/>}/>
         <Route path='/curso/:id' element={<Curso/>}/>
+        <Route path='/estadistica/' element={<Estadisticas/>}/>
       </Routes>
     </BrowserRouter>
   </UserProvider>

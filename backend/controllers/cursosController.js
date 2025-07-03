@@ -1,6 +1,6 @@
-const CursosModel = require("../models/cursosModel");
+import CursosModel from "../models/cursosModel.js";
 
-exports.obtenerCursoPorProfesorUsuario = async (req, res) => {
+export const obtenerCursoPorProfesorUsuario = async (req, res) => {
     try {
         const cursos = await CursosModel.obtenerCursosPorProfesorUsuario(req.params.usuario_id);
         res.json(cursos);
@@ -10,7 +10,7 @@ exports.obtenerCursoPorProfesorUsuario = async (req, res) => {
     }
 }
 
-exports.obtenerCursoPorId = async(req, res) => {
+export const obtenerCursoPorId = async (req, res) => {
     try {
         const curso = await CursosModel.obtenerCursoPorId(req.params.curso_id);
         res.json(curso);

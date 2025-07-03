@@ -1,4 +1,4 @@
-const { sql, config } = require('../database/db');
+import { sql, config } from '../database/db.js';
 
 async function getUserByEmail(email) {
   const pool = await sql.connect(config);
@@ -8,4 +8,4 @@ async function getUserByEmail(email) {
   return result.recordset[0];
 }
 
-module.exports = { getUserByEmail };
+export { getUserByEmail };

@@ -1,8 +1,8 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const { getUserByEmail } = require('../models/userModel');
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { getUserByEmail } from '../models/userModel.js';
 
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
   const { email, password } = req.body;
   const user = await getUserByEmail(email);
   if (!user) return res.status(401).json({ msg: 'Credenciales inválidas' });

@@ -1,4 +1,7 @@
-const sql = require('mssql');
+import sql from 'mssql';
+
+import dotenv from 'dotenv';
+dotenv.config();  
 
 const config = {
   user: process.env.DB_USER,
@@ -11,6 +14,4 @@ const config = {
   }
 };
 
-module.exports = {
-  sql, config
-};
+export { sql, config };

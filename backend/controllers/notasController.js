@@ -1,6 +1,6 @@
-const NotasModel = require("../models/notasModel");
+import NotasModel from "../models/notasModel.js";
 
-exports.crearNota = async (req, res) => {
+export const crearNota = async (req, res) => {
   try {
     await NotasModel.crearNota(req.body);
     res.json({ msg: "Nota registrada correctamente" });
@@ -10,7 +10,7 @@ exports.crearNota = async (req, res) => {
   }
 };
 
-exports.obtenerNotas = async (req, res) => {
+export const obtenerNotas = async (req, res) => {
   try {
     const notas = await NotasModel.obtenerNotasPorCurso(req.params.curso_id);
     res.json(notas);
@@ -19,7 +19,7 @@ exports.obtenerNotas = async (req, res) => {
   }
 };
 
-exports.actualizarNota = async (req, res) => {
+export const actualizarNota = async (req, res) => {
   try {
     const { alumno_id, curso_id, trimestre, nota } = req.body;
     await NotasModel.actualizarNota({ alumno_id, curso_id, trimestre, nota });
@@ -29,7 +29,7 @@ exports.actualizarNota = async (req, res) => {
   }
 };
 
-exports.eliminarNota = async (req, res) => {
+export const eliminarNota = async (req, res) => {
   try {
     await NotasModel.eliminarNota(req.params.id);
     res.json({ msg: "Nota eliminada correctamente" });
@@ -38,7 +38,7 @@ exports.eliminarNota = async (req, res) => {
   }
 };
 
-exports.obtenerNotaPorAlumnoYCurso = async (req, res) => {
+export const obtenerNotaPorAlumnoYCurso = async (req, res) => {
   const { alumno_id, curso_id } = req.params;
   try {
     const notas = await NotasModel.obtenerNotaPorAlumnoYCurso(

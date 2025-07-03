@@ -1,4 +1,4 @@
-const { sql, config } = require("../database/db");
+import { sql, config } from "../database/db.js";
 
 const CursosModel = {
   async obtenerCursosPorProfesorUsuario(usuario_id) {
@@ -59,4 +59,4 @@ const CursosModel = {
   },
 };
 
-module.exports = CursosModel;
+export default CursosModel;

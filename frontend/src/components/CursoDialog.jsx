@@ -16,6 +16,7 @@ const CursoDialog = ({ curso }) => {
         {curso.nombre}
       </h3>
       <p className="text-gray-600 text-sm">
+        Curso: <span className="font-medium">{curso.nombre_curso}</span> &nbsp;
         Grado: <span className="font-medium">{curso.grado}</span> &nbsp;
         Sección: <span className="font-medium">{curso.seccion}</span> &nbsp;
         Turno: <span className="font-medium">{curso.turno}</span>

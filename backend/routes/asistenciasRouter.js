@@ -1,10 +1,10 @@
-const express = require('express');
-const router = express.Router();
-const controlador = require('../controllers/asistenciaController');
-const verificarToken = require('../middleware/authMiddleware'); 
+import { Router } from 'express';
+const asistenciaRouter = Router();
+import { actualizarAsistencia, getAsistenciaPorCurso, getAsistenciaPorCursoYFecha } from '../controllers/asistenciaController.js';
+import verifyToken from '../middleware/authMiddleware.js'; 
 
-router.post('/edit', verificarToken, controlador.actualizarAsistencia);
-router.get('/curso/:curso_id', verificarToken, controlador.getAsistenciaPorCurso);
-router.get('/cursoyfecha/:curso_id', verificarToken, controlador.getAsistenciaPorCursoYFecha);
+asistenciaRouter.post('/edit', verifyToken, actualizarAsistencia);
+asistenciaRouter.get('/curso/:curso_id', verifyToken, getAsistenciaPorCurso);
+asistenciaRouter.get('/cursoyfecha/:curso_id', verifyToken, getAsistenciaPorCursoYFecha);
 
-module.exports = router;
+export default asistenciaRouter;

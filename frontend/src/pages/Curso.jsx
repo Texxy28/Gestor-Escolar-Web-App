@@ -123,7 +123,7 @@ export default function Curso() {
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
-      <h2 className="text-3xl font-bold text-blue-800 mb-1">{curso.nombre}</h2>
+      <h2 className="text-3xl font-bold text-green-800 mb-1">{curso.nombre}</h2>
       <p className="text-gray-700 mb-4">
         <span className="font-medium">Grado:</span> {curso.grado} &nbsp; |
         &nbsp;
@@ -173,7 +173,7 @@ export default function Curso() {
 
               <button
                 onClick={() => guardarNotas(alumno.id)}
-                className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+                className="bg-green-600 text-white px-3 py-1 rounded hover:bg-blue-700"
               >
                 Guardar notas
               </button>

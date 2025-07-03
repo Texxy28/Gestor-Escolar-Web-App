@@ -39,7 +39,7 @@ export default function Dashboard() {
     <div className="max-w-5xl mx-auto px-4 py-6">
       <h2 className="text-2xl font-bold mb-4 text-gray-800">
         Bienvenido,{" "}
-        <span className="text-blue-600">{user?.nombre || "Invitado"}</span>
+        <span className="text-green-600">{user?.nombre || "Invitado"}</span>
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">

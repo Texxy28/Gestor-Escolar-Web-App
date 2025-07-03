@@ -1,4 +1,5 @@
-const { sql, config } = require("../database/db");
+import { sql, config } from "../database/db.js";
+import NotificacionesModel from "./notificacionesModel.js";
 
 const NotasModel = {
   async crearNota({ alumno_id, curso_id, trimestre, nota }) {
@@ -42,6 +43,36 @@ const NotasModel = {
           INSERT (alumno_id, curso_id, trimestre, nota)
           VALUES (@alumno_id, @curso_id, @trimestre, @nota);
       `);
+
+    if (nota < 10) {
+      const result = await pool.request().input("curso_id", sql.Int, curso_id)
+        .query(`
+          SELECT profesor_id FROM Cursos WHERE id = @curso_id
+        `);
+
+      const profesor_id = result.recordset[0]?.profesor_id;
+
+      if (profesor_id) {
+        const result = await pool.request().input("curso_id", sql.Int, curso_id)
+          .query(`
+              SELECT nombre from Cursos where id = @curso_id
+            `);
+
+        const curso = result.recordset[0]?.nombre;
+
+        const resultAlumno = await pool
+          .request()
+          .input("alumno_id", sql.Int, alumno_id)
+          .query(`SELECT nombre, apellidos from Alumnos where id = @alumno_id`);
+
+        const alumno = `${resultAlumno.recordset[0].apellidos}, ${resultAlumno.recordset[0]?.nombre}`;
+
+        await NotificacionesModel.crearNotificacion({
+          profesor_id,
+          mensaje: `Nota baja detectada en el curso ${curso} del alumno ${alumno}`,
+        });
+      }
+    }
   },
 
   async eliminarNota(id) {
@@ -68,4 +99,4 @@ const NotasModel = {
   },
 };
 
-module.exports = NotasModel;
+export default NotasModel;

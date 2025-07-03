@@ -1,6 +1,6 @@
-const AsistenciaModel = require("../models/asistenciaModel");
+import AsistenciaModel from "../models/asistenciaModel.js";
 
-exports.getAsistenciaPorCursoYFecha = async (req, res) => {
+export const getAsistenciaPorCursoYFecha = async (req, res) => {
   const { curso_id } = req.params;
   const { fecha } = req.query;
   try {
@@ -12,9 +12,9 @@ exports.getAsistenciaPorCursoYFecha = async (req, res) => {
   } catch (err) {
     res.status(500).json({ msg: "Error al obtener las asistencias" });
   }
-};
+}
 
-exports.getAsistenciaPorCurso = async (req, res) => {
+export const getAsistenciaPorCurso = async (req, res) => {
   try {
     const { curso_id } = req.params;
     const asistencias = await AsistenciaModel.getAsistenciasPorCurso(curso_id);
@@ -22,9 +22,9 @@ exports.getAsistenciaPorCurso = async (req, res) => {
   } catch (err) {
     res.status(500).json({ msg: "Error al obtener las asistencias" })
   }
-};
+}
 
-exports.actualizarAsistencia = async (req, res) => {
+export const actualizarAsistencia = async (req, res) => {
   try {
     const { alumno_id, curso_id, fecha, presente } = req.body;
     await AsistenciaModel.actualizarAsistencia({
@@ -37,4 +37,4 @@ exports.actualizarAsistencia = async (req, res) => {
   } catch (err) {
     res.status(500).json({ msg: "Error al actualizar las asistencias" });
   }
-};
+}

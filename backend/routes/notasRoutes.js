@@ -1,12 +1,14 @@
-const express = require('express');
-const router = express.Router();
-const controlador = require('../controllers/notasController');
-const verificarToken = require('../middleware/authMiddleware'); // si deseas proteger
+import express from "express"
 
-router.post('/', verificarToken, controlador.crearNota);
-router.get('/:curso_id', verificarToken, controlador.obtenerNotas);
-router.post('/edit', verificarToken, controlador.actualizarNota);
-router.delete('/:id', verificarToken, controlador.eliminarNota);
-router.get('/:alumno_id/:curso_id', verificarToken, controlador.obtenerNotaPorAlumnoYCurso);
+import { actualizarNota, crearNota, eliminarNota, obtenerNotaPorAlumnoYCurso, obtenerNotas } from "../controllers/notasController.js"
+import verifyToken from "../middleware/authMiddleware.js"
 
-module.exports = router;
+const notasRouter = express.Router();
+
+notasRouter.post('/', verifyToken, crearNota);
+notasRouter.get('/:curso_id', verifyToken, obtenerNotas);
+notasRouter.post('/edit', verifyToken, actualizarNota);
+notasRouter.delete('/:id', verifyToken, eliminarNota);
+notasRouter.get('/:alumno_id/:curso_id', verifyToken, obtenerNotaPorAlumnoYCurso);
+
+export default notasRouter;

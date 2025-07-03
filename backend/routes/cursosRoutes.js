@@ -1,9 +1,11 @@
-const express = require('express');
-const router = express.Router();
-const controlador = require('../controllers/cursosController');
-const verificarToken = require('../middleware/authMiddleware'); 
+import express from "express"
 
-router.get('/:usuario_id', verificarToken, controlador.obtenerCursoPorProfesorUsuario);
-router.get('/curso/:curso_id', verificarToken, controlador.obtenerCursoPorId);
+import verifyToken from "../middleware/authMiddleware.js"
+const cursoRouter = express.Router();
 
-module.exports = router;
+import { obtenerCursoPorId, obtenerCursoPorProfesorUsuario } from "../controllers/cursosController.js"
+
+cursoRouter.get('/:usuario_id', verifyToken, obtenerCursoPorProfesorUsuario);
+cursoRouter.get('/curso/:curso_id', verifyToken, obtenerCursoPorId);
+
+export default cursoRouter;

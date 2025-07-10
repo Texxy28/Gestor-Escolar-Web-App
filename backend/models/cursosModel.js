@@ -57,6 +57,16 @@ const CursosModel = {
 
     return curso;
   },
+
+  async obtenerHorariosPorCurso(curso_id) {
+    const pool = await sql.connect(config);
+    const result = await pool
+      .request()
+      .input("curso_id", sql.Int, curso_id)
+      .query("SELECT dia_semana FROM Horarios WHERE curso_id = @curso_id")
+    return result.recordset.map(r => r.dia_semana.toLowerCase());
+  }
+
 };
 
 export default CursosModel;

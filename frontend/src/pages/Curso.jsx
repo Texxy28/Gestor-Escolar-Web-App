@@ -1,21 +1,41 @@
 import { useParams } from "react-router-dom";
 import { useUser } from "../context/UserContext";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import LoadingSpinner from "../components/LoadingSpinner";
+import AsistenciaFechaPicker from "../components/AsistenciaFechaPicker";
 
 export default function Curso() {
   const { id } = useParams();
   const { token } = useUser();
   const [curso, setCurso] = useState(null);
+  const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
   const [notas, setNotas] = useState({});
   const [asistencia, setAsistencia] = useState({});
 
   const [loading, setLoading] = useState(true);
 
-  const guardarAsistencias = async () => {
-    const fechaHoy = new Date().toISOString().split("T")[0];
+  const handleFechaSeleccionada = useCallback( async (nuevaFecha) => {
+    setFechaSeleccionada(nuevaFecha); 
 
+    try {
+        const res = await axios.get(`http://localhost:5000/api/asistencias/cursoyfecha/${id}`, {
+          params: { fecha: nuevaFecha.toISOString().split('T')[0] },
+          headers: { Authorization: token },
+        });
+
+        const asistenciaMap = {};
+        res.data.forEach((a) => {
+          asistenciaMap[a.alumno_id] = a.presente;
+        });
+        setAsistencia(asistenciaMap);
+      } catch (err) {
+        console.error("Error al obtener asistencias", err);
+      }
+
+  }, [id, token]);
+
+  const guardarAsistencias = async () => {
     for (const alumno_id in asistencia) {
       const presente = asistencia[alumno_id];
 
@@ -25,7 +45,7 @@ export default function Curso() {
           {
             alumno_id: parseInt(alumno_id),
             curso_id: id,
-            fecha: fechaHoy,
+            fecha: fechaSeleccionada,
             presente,
           },
           {
@@ -134,7 +154,17 @@ export default function Curso() {
         <span className="font-medium">Profesor:</span> {curso.profesor}
       </p>
 
-      <h3 className="text-xl font-semibold mt-6 mb-4">Lista de alumnos</h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold">Lista de alumnos</h3>
+
+        <div>
+          <AsistenciaFechaPicker
+            cursoId={id}
+            token={token}
+            onFechaSeleccionada={handleFechaSeleccionada}
+          />
+        </div>
+      </div>
 
       <div className="space-y-6">
         {curso.alumnos.map((alumno) => (
@@ -208,6 +238,11 @@ export default function Curso() {
                     }}
                   />
                   Presente
+                  {fechaSeleccionada && (
+                    <p>
+                      Fecha seleccionada: {fechaSeleccionada.toLocaleDateString("es-PE")}
+                    </p>
+                  )}
                 </label>
               </div>
             </div>

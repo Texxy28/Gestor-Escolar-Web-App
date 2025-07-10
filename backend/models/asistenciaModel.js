@@ -28,6 +28,24 @@ const AsistenciaModel = {
 
   async actualizarAsistencia({ alumno_id, curso_id, fecha, presente }) {
     const pool = await sql.connect(config);
+
+    const diasClaseResult = await pool
+      .request()
+      .input("curso_id", sql.Int, curso_id)
+      .query("SELECT dia_semana FROM Horarios WHERE curso_id = @curso_id");
+
+    const diasClase = diasClaseResult.recordset.map((r) =>
+      r.dia_semana.toLowerCase()
+    );
+
+    const diaSemana = new Date(fecha)
+      .toLocaleString("es-PE", { weekday: "long" })
+      .toLowerCase();
+
+    if (!diasClase.includes(diaSemana)) {
+      return;
+    }
+
     await pool
       .request()
       .input("alumno_id", sql.Int, alumno_id)

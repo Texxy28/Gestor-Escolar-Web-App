@@ -19,3 +19,13 @@ export const obtenerCursoPorId = async (req, res) => {
         res.status(500).json({ msg: 'Error al obtener curso' });
     }
 }
+
+export const obtenerHorariosPorCurso = async (req, res) => {
+    try {
+        const horarios = await CursosModel.obtenerHorariosPorCurso(req.params.curso_id);
+        res.json(horarios)
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: 'Error al obtener horarios' });
+    }
+}
